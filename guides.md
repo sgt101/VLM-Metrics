@@ -1,0 +1,3 @@
+- <a href="https://huggingface.co/spaces/OpenEvals/evaluation-guidebook#with-judge-models">Evaluation Guidebook</a> by HuggingFace
+
+    - <a href="https://www.turing.ac.uk/sites/default/files/2025-12/genai_model_risk_management_and_governance_in_financial_services_from_principles_to_practice_1.pdf">GenAI Model Risk Management and Governance in Financial Services from Principles to Practice</a> by Alan Turing Institute
