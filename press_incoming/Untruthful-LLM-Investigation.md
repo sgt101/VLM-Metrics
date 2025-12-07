@@ -12,6 +12,7 @@ Locate and compile reputable sources that document how untruthful output from La
 - **Indeterminism**: Inconsistent or variable responses to identical queries that cause harm
 - **Unfaithful retrieval**: Incorrect recall or misrepresentation of factual knowledge, including failures in Retrieval-Augmented Generation (RAG) systems and agent-based architectures
 - **Miscalibrated confidence**: Failure to recognize or communicate uncertainty; asserting false information with high confidence; inability to acknowledge knowledge boundaries
+- **Prompt injection & adversarial attacks***: Cases where malicious or inadvertent prompt manipulation causes LLM/VLM to generate false, harmful, or unauthorized outputs (e.g., jailbreaking, prompt injection leading to false commitments, pricing errors, or policy violations). *These cases receive special marking (asterisk after case ID, e.g., Int5*) to distinguish security-exploitation vectors from organic hallucinations.
 - **Multimodal systems**: Vision-Language Models (VLMs) and multimodal LLMs that process and analyze text, images, medical scans, financial charts, or other visual data
 - **Application domains**: Text generation, advice, analysis, diagnosis, decision-support, report generation, and question-answering
 
@@ -20,7 +21,7 @@ Locate and compile reputable sources that document how untruthful output from La
 - Copyright infringement and intellectual property disputes
 - Autonomous vehicles and driverless car incidents
 - Pure robotics or physical automation failures
-- Cybersecurity attacks or adversarial exploits unrelated to truthfulness
+- General cybersecurity attacks (malware, data breaches) unrelated to LLM truthfulness or prompt exploitation
 
 ### Entry Schema for New Cases
 
@@ -33,7 +34,8 @@ When adding new cases to the casebooks, follow this standardized format:
    - Prefixes: `Med` (Medical casebook), `Fin` (Finance casebook), `Int` (Interdomain casebook)
    - **IMPORTANT**: New entries awaiting review must use prefix WITHOUT number (e.g., `Med`, `Fin`, `Int`)
    - Only after review and approval should entries be assigned sequential numbers (Med9, Fin9, Int5, etc.)
-   - Example workflow: Draft entry as `Med` → Review → Approve → Renumber to `Med9`
+   - **SPECIAL MARKING**: Cases involving prompt injection or adversarial attacks receive an asterisk suffix (e.g., `Int5*`, `Fin12*`) to distinguish security-exploitation vectors from organic hallucinations or bias
+   - Example workflow: Draft entry as `Med` → Review → Approve → Renumber to `Med9` (or `Int5*` if prompt injection case)
 
 2. **URL(s)**
    - Primary source URL(s) as bare links (no markdown formatting in this column)
