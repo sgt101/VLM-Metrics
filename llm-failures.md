@@ -1,1 +1,2 @@
 - <a href="https://www.youtube.com/watch?v=COIBKaDIjmU"> Anti-gravity deletes D:</a>
+- <a href="https://hbr.org/2022/03/why-ai-failed-to-live-up-to-its-potential-during-the-pandemic"> Why AI failed to live up to its potential during the pandemic</a>
