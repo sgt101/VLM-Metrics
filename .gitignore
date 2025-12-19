@@ -1,0 +1,40 @@
+# Project-specific ignores
+llm.env
+#runs/
+.DS_Store
+__private/
+__*/
+
+.*/.*
+
+# Ignore all files that start with $ or .
+$*
+.*
+
+# But keep the .gitignore file
+!.gitignore
+
+
+# addition environment definitions
+llm.env
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# Generated/binary artifacts
+*.pkl
+#*.parquet
+#*/*.npy
+#*.pdf
+#*.svg
+
+# Tool/config files (CLI configs)
+gemini-cli.*
+claude-code.*
+
+# Explicit docs to ignore (project-specific)
+AGENTS.md
+QWEN.md
+CLAUDE.md
+GEMINI.md
