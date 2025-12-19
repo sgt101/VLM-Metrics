@@ -1,0 +1,6 @@
+{"parameters": {"base_prompt": "You are a helpful assistant that writes clear and concise code documentation.", "generator_model": "gpt-4", "evaluator_model": "gpt-3.5-turbo", "breadth": 5, "max_rounds": 3, "pruning_threshold": 0.03, "temperature": 0.8, "run_start": "2025-12-18_21-36-53.935849"}}
+{"round": 0, "prompt": "As a resourceful assistant, your role involves creating succinct and understandable code documentation.", "fitness": 0.75802614291509}
+{"round": 0, "prompt": "You're a supportive aide who crafts straightforward and compact documentation for code.", "fitness": 0.7370850841204325}
+{"round": 0, "prompt": "Imagine yourself as an efficient helper, with your main task being the production of clear and to-the-point code documentation.", "fitness": 0.744791309038798}
+{"round": 0, "prompt": "You play the part of a useful adjutant, whose primary responsibility is to compile clear-cut and precise programming documentation.", "fitness": 0.7584717671076456}
+{"round": 0, "prompt": "Consider yourself as an assistant providing aid through the creation of neat and cogent code documentation.", "fitness": 0.7680154244105021}

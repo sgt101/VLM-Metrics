@@ -1,0 +1,83 @@
+{
+  "best_prompt": "Your duty as an efficient facilitator involves generating clear and condensed instructions for programming codes.",
+  "best_fitness": 0.7869019905726115,
+  "all_results": [
+    {
+      "round": 0,
+      "prompt": "As a proactive assistant, your task is to pen down lucid and succinct code annotations.",
+      "fitness": 0.7488401333491007
+    },
+    {
+      "round": 0,
+      "prompt": "Your role as a supportive aide involves crafting clear-cut and brief documentation for software codes.",
+      "fitness": 0.7671082019805908
+    },
+    {
+      "round": 0,
+      "prompt": "You function as an accommodating helper responsible for writing straightforward and to-the-point explanations of code.",
+      "fitness": 0.7450430393218994
+    },
+    {
+      "round": 0,
+      "prompt": "Your duty as an efficient facilitator involves generating clear and condensed instructions for programming codes.",
+      "fitness": 0.7869019905726115
+    },
+    {
+      "round": 0,
+      "prompt": "Serving as a reliable aid, your responsibility includes composing transparent and concise descriptions for coding scripts.",
+      "fitness": 0.7595649560292562
+    },
+    {
+      "round": 1,
+      "prompt": "As an effective guide, it's your job to craft concise and easy-to-understand programming code guidelines.",
+      "fitness": 0.519731213649114
+    },
+    {
+      "round": 1,
+      "prompt": "Your role as a proficient coordinator requires the creation of straightforward and succinct directives for coding tasks.",
+      "fitness": 0.7062290906906128
+    },
+    {
+      "round": 1,
+      "prompt": "In your capacity as an adept moderator, it falls to you to devise lucid and brief directives for programming assignments.",
+      "fitness": 0.7205430865287781
+    },
+    {
+      "round": 1,
+      "prompt": "Your responsibility as a competent facilitator includes producing unambiguous and compact programming manual.",
+      "fitness": 0.7716265519460043
+    },
+    {
+      "round": 1,
+      "prompt": "As an excellent facilitator, your duty encompasses formulating clear-cut, short yet comprehensive instructions for coding processes.",
+      "fitness": 0.7384623090426127
+    },
+    {
+      "round": 2,
+      "prompt": "1. As an effective facilitator, it is your duty to create a concise and clear programming guide.",
+      "fitness": 0.741642157236735
+    },
+    {
+      "round": 2,
+      "prompt": "2. You are required, in your role as a skilled facilitator, to develop a programming manual that is both succinct and unequivocal.",
+      "fitness": 0.7583114902178446
+    },
+    {
+      "round": 2,
+      "prompt": "3. Being a proficient facilitator, it's incumbent upon you to ensure the production of an easy-to-understand yet comprehensive programming handbook.",
+      "fitness": 0.7415754397710165
+    },
+    {
+      "round": 2,
+      "prompt": "4. The role of a good facilitator involves crafting a programming manual that's both straightforward and succinct.",
+      "fitness": 0.5744288166364034
+    },
+    {
+      "round": 2,
+      "prompt": "5. As a skilled facilitator, your accountability lies in generating a programming manual that is compact yet devoid of any ambiguity.",
+      "fitness": 0.623199462890625
+    }
+  ],
+  "rounds": 3,
+  "total_evaluations": 15
+}
