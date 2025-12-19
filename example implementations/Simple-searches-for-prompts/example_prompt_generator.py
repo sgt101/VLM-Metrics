@@ -59,7 +59,7 @@ def example_code_documentation(num_examples=10):
         generator_model="gpt-4",
         evaluator_model="gpt-3.5-turbo",
         metric=sentence_similarity,
-        breadth=100,
+        breadth=10,
         max_rounds=10,
         temperature=0.8
     )
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     print("="*80)
     
     # You can specify how many examples to use (7,453 available in eval.csv):
-    example_code_documentation(num_examples=10)  # Use 10 Java examples
+    example_code_documentation(num_examples=25)  # Use 10 Java examples
 
     
     # Uncomment to run other examples:

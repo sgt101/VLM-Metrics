@@ -121,6 +121,9 @@ class PromptGenerator:
         self._results_file = Path.cwd().joinpath("results", f"prompt_gen_{self._run_start}.json")
         self._results_file.parent.mkdir(parents=True, exist_ok=True)
         
+        # Setup checkpoint file
+        self._checkpoint_file = Path.cwd().joinpath("results", f"checkpoint_{self._run_start}.json")
+        
         # Setup prompt logging
         self._prompt_log_file = Path.cwd().joinpath("results", f"prompts_{self._run_start}.csv")
         self._init_prompt_log()
@@ -446,7 +449,8 @@ Generate {num_variations} creative variations of this prompt."""
     def optimize(
         self,
         evaluation_set: List[Dict],
-        initial_variations: Optional[List[str]] = None
+        initial_variations: Optional[List[str]] = None,
+        resume_from_checkpoint: bool = True
     ) -> Dict:
         """
         Run the optimization loop to find the best prompt.
@@ -454,6 +458,7 @@ Generate {num_variations} creative variations of this prompt."""
         Args:
             evaluation_set: List of test cases with 'input' and 'expected' keys
             initial_variations: Optional starting variations (generates if None)
+            resume_from_checkpoint: If True, resume from checkpoint if available
             
         Returns:
             Dictionary with:
@@ -466,73 +471,109 @@ Generate {num_variations} creative variations of this prompt."""
             ...     {'input': 'def add(a, b): return a + b', 
             ...      'expected': 'Adds two numbers'}
             ... ]
+            
             >>> result = generator.optimize(test_cases)
             >>> print(result['best_prompt'])
         """
         if not self._metric:
             raise ValueError("Metric function must be provided")
         
-        # Initialize
-        if initial_variations:
-            current_prompts = initial_variations[:self._breadth]
-        else:
-            current_prompts = self.generate_variations(self._base_prompt, self._breadth)
+        # Try to resume from checkpoint
+        start_round = 0
+        if resume_from_checkpoint and self._checkpoint_file.exists():
+            checkpoint = self._load_checkpoint()
+            if checkpoint:
+                print(f"\n🔄 Resuming from checkpoint at round {checkpoint['last_completed_round'] + 1}")
+                start_round = checkpoint['last_completed_round'] + 1
+                current_prompts = checkpoint['current_prompts']
+                best_prompt = checkpoint['best_prompt']
+                best_fitness = checkpoint['best_fitness']
+                all_results = checkpoint['all_results']
+                print(f"   Best fitness so far: {best_fitness:.4f}")
+            else:
+                # Checkpoint corrupted, start fresh
+                start_round = 0
         
-        best_prompt = self._base_prompt
-        best_fitness = 0.0
-        all_results = []
-        
-        # Write parameters
-        self._write_params()
+        # Initialize if not resuming
+        if start_round == 0:
+            if initial_variations:
+                current_prompts = initial_variations[:self._breadth]
+            else:
+                current_prompts = self.generate_variations(self._base_prompt, self._breadth)
+            
+            best_prompt = self._base_prompt
+            best_fitness = 0.0
+            all_results = []
+            
+            # Write parameters
+            self._write_params()
         
         # Optimization loop
-        for round_num in range(self._max_rounds):
+        for round_num in range(start_round, self._max_rounds):
             print(f"\n=== Round {round_num + 1}/{self._max_rounds} ===")
             
-            # Evaluate all prompts in this round using batch API
-            fitness_scores = self.evaluate_prompts_batch(current_prompts, evaluation_set, round_num)
-            
-            # Create results for this round
-            round_results = []
-            for i, (prompt, fitness) in enumerate(zip(current_prompts, fitness_scores)):
-                result = {
-                    'round': round_num,
-                    'prompt': prompt,
-                    'fitness': fitness
-                }
-                round_results.append(result)
-                all_results.append(result)
+            try:
+                # Evaluate all prompts in this round using batch API
+                fitness_scores = self.evaluate_prompts_batch(current_prompts, evaluation_set, round_num)
                 
-                # Update best
-                if fitness > best_fitness:
-                    best_fitness = fitness
-                    best_prompt = prompt
-                    print(f"✓ New best fitness: {best_fitness:.4f} (variation {i+1})")
+                # Create results for this round
+                round_results = []
+                for i, (prompt, fitness) in enumerate(zip(current_prompts, fitness_scores)):
+                    result = {
+                        'round': round_num,
+                        'prompt': prompt,
+                        'fitness': fitness
+                    }
+                    round_results.append(result)
+                    all_results.append(result)
+                    
+                    # Update best
+                    if fitness > best_fitness:
+                        best_fitness = fitness
+                        best_prompt = prompt
+                        print(f"✓ New best fitness: {best_fitness:.4f} (variation {i+1})")
+                    
+                    # Save intermediate results
+                    self._save_result(result)
                 
-                # Save intermediate results
-                self._save_result(result)
-            
-            # Sort by fitness
-            round_results.sort(key=lambda x: x['fitness'], reverse=True)
-            
-            # Select top performers for next round
-            top_k = max(1, self._breadth // 3)
-            top_prompts = [r['prompt'] for r in round_results[:top_k]]
-            
-            # Generate new variations from top performers
-            if round_num < self._max_rounds - 1:
-                next_prompts = []
-                variations_per_prompt = self._breadth // len(top_prompts)
+                # Sort by fitness
+                round_results.sort(key=lambda x: x['fitness'], reverse=True)
                 
-                for top_prompt in top_prompts:
-                    variations = self.generate_variations(top_prompt, variations_per_prompt)
-                    next_prompts.extend(variations)
+                # Select top performers for next round
+                top_k = max(1, self._breadth // 3)
+                top_prompts = [r['prompt'] for r in round_results[:top_k]]
                 
-                # Fill remaining slots with variations of best
-                while len(next_prompts) < self._breadth:
-                    next_prompts.extend(self.generate_variations(best_prompt, 1))
+                # Generate new variations from top performers
+                if round_num < self._max_rounds - 1:
+                    next_prompts = []
+                    variations_per_prompt = self._breadth // len(top_prompts)
+                    
+                    for top_prompt in top_prompts:
+                        variations = self.generate_variations(top_prompt, variations_per_prompt)
+                        next_prompts.extend(variations)
+                    
+                    # Fill remaining slots with variations of best
+                    while len(next_prompts) < self._breadth:
+                        next_prompts.extend(self.generate_variations(best_prompt, 1))
+                    
+                    current_prompts = next_prompts[:self._breadth]
                 
-                current_prompts = next_prompts[:self._breadth]
+                # Save checkpoint after successful round
+                self._save_checkpoint(
+                    round_num=round_num,
+                    current_prompts=current_prompts,
+                    best_prompt=best_prompt,
+                    best_fitness=best_fitness,
+                    all_results=all_results
+                )
+                print(f"💾 Checkpoint saved after round {round_num + 1}")
+                
+            except Exception as e:
+                _logger.error(f"Error in round {round_num + 1}: {e}")
+                print(f"\n❌ Error in round {round_num + 1}: {e}")
+                print(f"💾 Checkpoint saved. You can resume by running again.")
+                # Checkpoint already saved from previous round
+                raise
         
         # Final results
         final_result = {
@@ -575,3 +616,35 @@ Generate {num_variations} creative variations of this prompt."""
             json.dump(final_result, f, indent=2)
         
         print(f"\n✓ Results saved to {final_file}")
+        
+        # Clean up checkpoint file on successful completion
+        if self._checkpoint_file.exists():
+            self._checkpoint_file.unlink()
+            print(f"✓ Checkpoint file removed (optimization complete)")
+    
+    def _save_checkpoint(self, round_num: int, current_prompts: List[str], 
+                        best_prompt: str, best_fitness: float, all_results: List[Dict]):
+        """Save checkpoint after each round for recovery."""
+        checkpoint = {
+            'last_completed_round': round_num,
+            'current_prompts': current_prompts,
+            'best_prompt': best_prompt,
+            'best_fitness': best_fitness,
+            'all_results': all_results,
+            'timestamp': str(datetime.datetime.now())
+        }
+        
+        with open(self._checkpoint_file, 'w') as f:
+            json.dump(checkpoint, f, indent=2)
+    
+    def _load_checkpoint(self) -> Optional[Dict]:
+        """Load checkpoint from file if it exists."""
+        try:
+            with open(self._checkpoint_file, 'r') as f:
+                checkpoint = json.load(f)
+            print(f"✓ Loaded checkpoint from {checkpoint['timestamp']}")
+            return checkpoint
+        except Exception as e:
+            _logger.error(f"Error loading checkpoint: {e}")
+            print(f"⚠️  Could not load checkpoint: {e}")
+            return None
