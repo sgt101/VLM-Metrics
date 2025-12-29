@@ -3,6 +3,7 @@
 Create VLM-Metrics PowerPoint Template - Professional Edition
 """
 
+from datetime import datetime
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
@@ -311,7 +312,8 @@ add_two_column_slide(prs)
 add_closing_slide(prs)
 
 # Save the presentation
-output_file = "VLM-Metrics_Template.pptx"
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+output_file = f"business_presentations/VLM-Metrics_Template_{timestamp}.pptx"
 prs.save(output_file)
 print(f"✓ Professional template created: {output_file}")
 print(f"  - 5 refined slide templates")
